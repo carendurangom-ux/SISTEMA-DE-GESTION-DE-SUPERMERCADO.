@@ -8,11 +8,6 @@ Proyecto final de Programación I desarrollado en Python.
 - Tkinter
 - JSON
 
-## Arquitectura
-
-Arquitectura monolítica organizada por módulos.s
-
-
 # Manual breve de usuario
 
 > Las capturas de pantalla deben tomarse al ejecutar `python main.py` en su equipo (marcadas con **[CAPTURA]** en cada sección).
@@ -161,3 +156,28 @@ Aplicación para administrar las operaciones de un supermercado: productos, inve
 ## Autora
 
 Karen Durango
+
+## Arquitectura
+
+El sistema usa una **arquitectura monolítica en capas**: una sola aplicación en Python, ejecutada desde `main.py`, donde todos los módulos se despliegan juntos.
+
+| Capa | Responsabilidad |
+|------|-----------------|
+| Interfaz | Interacción con el usuario |
+| Negocio | Lógica de productos, inventario, ventas y caja |
+| Persistencia | Lectura y escritura de datos en archivos JSON |
+
+**Flujo:** Interfaz → Negocio → Persistencia → archivos JSON.
+
+**Ventajas de este enfoque:** es simple de desarrollar, probar y ejecutar, ideal para un sistema de este tamaño.
+
+## Estado del proyecto
+
+🚧 En desarrollo. La estructura de capas ya está definida; los módulos se están implementando.
+
+## Módulos planeados
+
+- **Productos:** registro, consulta, edición y eliminación.
+- **Inventario:** control de existencias.
+- **Venta:** registro de ventas.
+- **Caja:** control del dinero de la caja.
