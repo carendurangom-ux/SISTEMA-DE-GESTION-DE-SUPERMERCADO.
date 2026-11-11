@@ -9,7 +9,6 @@ def _ruta(nombre):
 
 
 def leer_json(nombre, valor_por_defecto):
-    """Lee un archivo JSON. Si no existe o está vacío, devuelve el valor por defecto."""
     ruta = _ruta(nombre)
     if not os.path.exists(ruta):
         return valor_por_defecto
