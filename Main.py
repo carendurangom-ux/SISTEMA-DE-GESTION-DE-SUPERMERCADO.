@@ -7,6 +7,9 @@ from persistencia.archivos_json import ErrorPersistencia
 from negocio.tienda import Tienda
 from interfaz.Menu_principal import App
 
+# este es un cabio de la señorita elin :)
+def funcion_eilin():
+    print("Hola, soy la señorita Elin y estoy haciendo un cambio en el código.")
 
 def main():
     try:
