@@ -117,3 +117,47 @@ Usuario -> interfaz.py -> negocio.py -> persistencia.py -> datos/*.json
               ^               |               |
               |_______________|_______________|
         mensajes de error / resultado de la operación
+
+        # Sistema de Gestión de Supermercado
+
+Aplicación para administrar las operaciones de un supermercado: productos, inventario, ventas y clientes.
+
+## Características
+
+- Registro, edición y eliminación de productos
+- Control de inventario y stock mínimo
+- Registro de ventas y generación de facturas
+- Gestión de clientes y proveedores
+- Reportes de ventas
+
+## Tecnologías
+
+- Lenguaje: (por ejemplo, Python / Java / C# / JavaScript)
+- Base de datos: (por ejemplo, MySQL / SQLite / archivos)
+- Otras herramientas: (frameworks o librerías)
+
+## Requisitos
+
+- (Versión del lenguaje, por ejemplo Python 3.11)
+- (Dependencias, por ejemplo `pip install -r requirements.txt`)
+
+## Instalación y ejecución
+
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/carendurangom-ux/SISTEMAVDE-GESTION-DE-SUPERMERCADO.git
+   cd SISTEMAVDE-GESTION-DE-SUPERMERCADO
+   ```
+2. Instala las dependencias.
+3. Ejecuta el programa:
+   ```bash
+   (comando para iniciar tu sistema)
+   ```
+
+## Estructura del proyecto
+
+(Lista breve de carpetas y archivos principales)
+
+## Autora
+
+Karen Durango
