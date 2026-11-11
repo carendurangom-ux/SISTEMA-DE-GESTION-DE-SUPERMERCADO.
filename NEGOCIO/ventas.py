@@ -1,80 +1,64 @@
 from datetime import datetime
-from persistencia.archivos_json import cargar_datos, guardar_datos
 
-RUTA_PRODUCTOS = "datos/productos.json"
-RUTA_VENTAS = "datos/ventas.json"
+from Persistencia.Archivos_json import leer_json, guardar_json
+from Negocio import Productos, Inventario, Caja
 
-
-def calcular_subtotal(carrito):
-
-    subtotal = 0
-
-    for producto in carrito:
-        subtotal += producto["precio"] * producto["cantidad"]
-
-    return subtotal
+ARCHIVO = "Ventas.json"
 
 
-def realizar_venta(carrito, pago, descuento=0, impuesto=0):
+def listar_ventas():
+    datos = leer_json(ARCHIVO, [])
+    return datos if isinstance(datos, list) else []
 
-    productos = cargar_datos(RUTA_PRODUCTOS)
-    ventas = cargar_datos(RUTA_VENTAS)
 
-    # Verificar stock
-    for item in carrito:
+def registrar_venta(items):
+    """items: lista de tuplas (codigo, cantidad)."""
+    if not items:
+        raise ValueError("La venta no tiene productos.")
 
-        encontrado = False
+    # Unir códigos repetidos para validar bien el stock
+    acumulado = {}
+    for codigo, cantidad in items:
+        if cantidad <= 0:
+            raise ValueError("La cantidad debe ser mayor que cero.")
+        acumulado[codigo] = acumulado.get(codigo, 0) + cantidad
 
-        for producto in productos:
+    # Validar todo antes de modificar nada
+    detalle = []
+    total = 0
+    for codigo, cantidad in acumulado.items():
+        producto = Productos.buscar_producto(codigo)
+        if producto is None:
+            raise ValueError(f"No existe el producto {codigo}.")
+        if producto["cantidad"] < cantidad:
+            raise ValueError(
+                f"Stock insuficiente de {producto['nombre']} "
+                f"(disponible: {producto['cantidad']})."
+            )
+        subtotal = round(producto["precio"] * cantidad, 2)
+        total += subtotal
+        detalle.append({
+            "codigo": codigo,
+            "nombre": producto["nombre"],
+            "cantidad": cantidad,
+            "precio": producto["precio"],
+            "subtotal": subtotal,
+        })
 
-            if producto["codigo"] == item["codigo"]:
+    # Aplicar cambios
+    for linea in detalle:
+        Inventario.descontar_stock(linea["codigo"], linea["cantidad"])
+    total = round(total, 2)
+    if total > 0:
+        Caja.registrar_ingreso(total)
 
-                encontrado = True
-
-                if item["cantidad"] > producto["stock"]:
-                    return False, "No hay suficiente inventario."
-
-        if not encontrado:
-            return False, "Producto no encontrado."
-
-    subtotal = calcular_subtotal(carrito)
-
-    valor_descuento = subtotal * descuento
-
-    subtotal_con_descuento = subtotal - valor_descuento
-
-    valor_impuesto = subtotal_con_descuento * impuesto
-
-    total = subtotal_con_descuento + valor_impuesto
-
-    if pago < total:
-        return False, "El pago es insuficiente."
-
-    # Actualizar inventario
-    for item in carrito:
-
-        for producto in productos:
-
-            if producto["codigo"] == item["codigo"]:
-                producto["stock"] -= item["cantidad"]
-
-    numero_factura = len(ventas) + 1
-
-    factura = {
-        "numero_factura": numero_factura,
+    ventas = listar_ventas()
+    venta = {
+        "id": len(ventas) + 1,
         "fecha": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "detalle": carrito,
-        "descuento": valor_descuento,
-        "impuesto": valor_impuesto,
+        "detalle": detalle,
         "total": total,
-        "pago": pago,
-        "cambio": pago - total,
-        "estado": "Activa"
     }
-
-    ventas.append(factura)
-
-    guardar_datos(RUTA_PRODUCTOS, productos)
-    guardar_datos(RUTA_VENTAS, ventas)
-
-    return True, factura
+    ventas.append(venta)
+    guardar_json(ARCHIVO, ventas)
+    return venta

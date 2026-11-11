@@ -1,62 +1,29 @@
-
-
-from persistencia.archivos_json import cargar_datos, guardar_datos
-
-RUTA_PRODUCTOS = "datos/productos.json"
+from Negocio import Productos
 
 
 def agregar_stock(codigo, cantidad):
-
-    productos = cargar_datos(RUTA_PRODUCTOS)
-
+    if cantidad <= 0:
+        raise ValueError("La cantidad debe ser mayor que cero.")
+    productos = Productos.listar_productos()
     for producto in productos:
-
         if producto["codigo"] == codigo:
-
-            if cantidad <= 0:
-                return False, "La cantidad debe ser mayor que cero."
-
-            producto["stock"] += cantidad
-
-            guardar_datos(RUTA_PRODUCTOS, productos)
-
-            return True, "Stock actualizado correctamente."
-
-    return False, "Producto no encontrado."
+            producto["cantidad"] += cantidad
+            Productos.guardar_productos(productos)
+            return
+    raise ValueError(f"No existe el producto {codigo}.")
 
 
-def retirar_stock(codigo, cantidad):
-
-    productos = cargar_datos(RUTA_PRODUCTOS)
-
+def descontar_stock(codigo, cantidad):
+    productos = Productos.listar_productos()
     for producto in productos:
-
         if producto["codigo"] == codigo:
-
-            if cantidad <= 0:
-                return False, "Cantidad inválida."
-
-            if cantidad > producto["stock"]:
-                return False, "No hay suficiente stock."
-
-            producto["stock"] -= cantidad
-
-            guardar_datos(RUTA_PRODUCTOS, productos)
-
-            return True, "Salida de inventario registrada."
-
-    return False, "Producto no encontrado."
+            if producto["cantidad"] < cantidad:
+                raise ValueError(f"Stock insuficiente de {producto['nombre']}.")
+            producto["cantidad"] -= cantidad
+            Productos.guardar_productos(productos)
+            return
+    raise ValueError(f"No existe el producto {codigo}.")
 
 
-def verificar_stock_minimo():
-
-    productos = cargar_datos(RUTA_PRODUCTOS)
-
-    productos_bajos = []
-
-    for producto in productos:
-
-        if producto["stock"] <= producto["stock_minimo"]:
-            productos_bajos.append(producto)
-
-    return productos_bajos
+def productos_bajo_stock(minimo=5):
+    return [p for p in Productos.listar_productos() if p["cantidad"] <= minimo]
