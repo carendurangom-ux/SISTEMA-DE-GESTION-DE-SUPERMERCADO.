@@ -1,0 +1,20 @@
+{
+    "sesiones": [
+        {
+            "id": 1,
+            "fecha_apertura": "2026-11-10 08:00:00",
+            "saldo_inicial": 100000.0,
+            "movimientos": [
+                {"fecha": "2026-11-10 10:15:00", "tipo": "venta", "concepto": "Factura #1", "valor": 11067.0},
+                {"fecha": "2026-11-10 12:40:00", "tipo": "venta", "concepto": "Factura #2", "valor": 16707.6},
+                {"fecha": "2026-11-10 14:05:00", "tipo": "egreso", "concepto": "Compra de bolsas", "valor": 5000.0},
+                {"fecha": "2026-11-10 16:20:00", "tipo": "devolucion", "concepto": "Devolución factura #2", "valor": 5569.2}
+            ],
+            "estado": "Cerrada",
+            "fecha_cierre": "2026-11-10 18:00:00",
+            "valor_esperado": 117205.4,
+            "valor_declarado": 116705.4,
+            "diferencia": -500.0
+        }
+    ]
+}
