@@ -6,6 +6,7 @@ from tkinter import messagebox
 from persistencia.archivos_json import ErrorPersistencia
 from negocio.tienda import Tienda
 from interfaz.Menu_principal import App
+
 #Hello, este es un cambio de la señorita Elin, estoy agregando una función para probar el control de versiones.
 # este es un cabio de la señorita elin :)
 def funcion_eilin():

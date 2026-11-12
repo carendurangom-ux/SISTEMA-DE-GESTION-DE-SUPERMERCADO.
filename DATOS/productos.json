@@ -1,0 +1,12 @@
+[
+    {"codigo": "P001", "nombre": "Arroz 500g", "categoria": "Granos", "precio_compra": 1800.0, "precio_venta": 2500.0, "stock": 50, "stock_minimo": 10, "activo": true},
+    {"codigo": "P002", "nombre": "Frijol 500g", "categoria": "Granos", "precio_compra": 3000.0, "precio_venta": 4200.0, "stock": 40, "stock_minimo": 10, "activo": true},
+    {"codigo": "P003", "nombre": "Leche entera 1L", "categoria": "Lácteos", "precio_compra": 3200.0, "precio_venta": 4300.0, "stock": 30, "stock_minimo": 12, "activo": true},
+    {"codigo": "P004", "nombre": "Huevos x30", "categoria": "Lácteos", "precio_compra": 14000.0, "precio_venta": 17500.0, "stock": 15, "stock_minimo": 5, "activo": true},
+    {"codigo": "P005", "nombre": "Aceite 1L", "categoria": "Aceites", "precio_compra": 8500.0, "precio_venta": 11500.0, "stock": 8, "stock_minimo": 10, "activo": true},
+    {"codigo": "P006", "nombre": "Azúcar 1kg", "categoria": "Granos", "precio_compra": 2800.0, "precio_venta": 3900.0, "stock": 25, "stock_minimo": 10, "activo": true},
+    {"codigo": "P007", "nombre": "Café molido 250g", "categoria": "Bebidas", "precio_compra": 6000.0, "precio_venta": 8500.0, "stock": 20, "stock_minimo": 8, "activo": true},
+    {"codigo": "P008", "nombre": "Gaseosa 1.5L", "categoria": "Bebidas", "precio_compra": 3500.0, "precio_venta": 5200.0, "stock": 36, "stock_minimo": 12, "activo": true},
+    {"codigo": "P009", "nombre": "Jabón de baño", "categoria": "Aseo", "precio_compra": 1500.0, "precio_venta": 2400.0, "stock": 5, "stock_minimo": 10, "activo": true},
+    {"codigo": "P010", "nombre": "Papel higiénico x4", "categoria": "Aseo", "precio_compra": 5200.0, "precio_venta": 7400.0, "stock": 18, "stock_minimo": 8, "activo": true}
+]
