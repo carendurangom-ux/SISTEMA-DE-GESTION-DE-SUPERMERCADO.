@@ -1,128 +1,79 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from .datos_ui import productos, guardar_productos, dinero
+from NEGOCIO import inventario, ErrorNegocio
+from INTERFAZ.datos_ui import TablaDatos
 
-class ProductosFrame(ttk.Frame):
-    def __init__(self, parent):
-        super().__init__(parent, style="Page.TFrame", padding=22)
-        self._construir()
-        self.actualizar()
 
-    def _construir(self):
-        ttk.Label(self, text="Productos", style="Title.TLabel").pack(anchor="w")
-        ttk.Label(self, text="Administra el catálogo y los precios de venta.",
-                  style="Muted.TLabel").pack(anchor="w", pady=(2, 18))
+class VentanaInventario(tk.Toplevel):
+    def __init__(self, parent, tienda):
+        super().__init__(parent)
+        self.tienda = tienda
+        self.title("Control de Inventario")
+        self.geometry("800x500")
+        self.crear_widgets()
+        self.actualizar_alerta()
 
-        barra = ttk.Frame(self, style="Page.TFrame")
-        barra.pack(fill="x", pady=(0, 12))
-        ttk.Button(barra, text="+ Agregar producto", style="Accent.TButton",
-                   command=self.agregar).pack(side="left")
-        ttk.Button(barra, text="Editar seleccionado", command=self.editar).pack(side="left", padx=8)
-        ttk.Button(barra, text="Eliminar", style="Danger.TButton",
-                   command=self.eliminar).pack(side="left")
-        ttk.Button(barra, text="Actualizar", command=self.actualizar).pack(side="right")
+    def crear_widgets(self):
+        marco_mov = ttk.LabelFrame(self, text="Registrar Movimiento", padding="10")
+        marco_mov.pack(fill=tk.X, padx=10, pady=5)
 
-        columnas = ("codigo", "nombre", "categoria", "compra", "venta", "stock")
-        self.tabla = ttk.Treeview(self, columns=columnas, show="headings", height=17)
-        titulos = {
-            "codigo":"Código", "nombre":"Nombre", "categoria":"Categoría",
-            "compra":"Precio compra", "venta":"Precio venta", "stock":"Existencias"
-        }
-        anchos = {"codigo":100, "nombre":220, "categoria":150, "compra":130, "venta":130, "stock":100}
-        for col in columnas:
-            self.tabla.heading(col, text=titulos[col])
-            self.tabla.column(col, width=anchos[col], anchor="w")
-        self.tabla.pack(fill="both", expand=True)
+        ttk.Label(marco_mov, text="Código:").grid(row=0, column=0, sticky="w")
+        self.codigo_entry = ttk.Entry(marco_mov)
+        self.codigo_entry.grid(row=0, column=1, padx=5)
 
-    def actualizar(self):
-        self.tabla.delete(*self.tabla.get_children())
-        for p in productos():
-            self.tabla.insert("", "end", values=(
-                p.get("codigo", ""), p.get("nombre", ""), p.get("categoria", ""),
-                dinero(p.get("precio_compra", 0)), dinero(p.get("precio_venta", 0)),
-                p.get("stock", 0)
-            ))
+        ttk.Label(marco_mov, text="Tipo:").grid(row=0, column=2, sticky="w")
+        self.tipo_var = tk.StringVar(value="entrada")
+        ttk.Radiobutton(marco_mov, text="Entrada", variable=self.tipo_var,
+                        value="entrada").grid(row=0, column=3, padx=5)
+        ttk.Radiobutton(marco_mov, text="Salida", variable=self.tipo_var,
+                        value="salida").grid(row=0, column=4, padx=5)
 
-    def _formulario(self, titulo, inicial=None):
-        inicial = inicial or {}
-        ventana = tk.Toplevel(self)
-        ventana.title(titulo)
-        ventana.geometry("390x470")
-        ventana.configure(bg="#171d23")
-        ventana.transient(self.winfo_toplevel())
-        ventana.grab_set()
+        ttk.Label(marco_mov, text="Cantidad:").grid(row=1, column=0, sticky="w", pady=5)
+        self.cantidad_entry = ttk.Entry(marco_mov)
+        self.cantidad_entry.grid(row=1, column=1, padx=5)
 
-        campos = [
-            ("codigo", "Código"), ("nombre", "Nombre"),
-            ("categoria", "Categoría"), ("precio_compra", "Precio de compra"),
-            ("precio_venta", "Precio de venta"), ("stock", "Existencias"),
-            ("stock_minimo", "Stock mínimo")
-        ]
-        entradas = {}
-        tk.Label(ventana, text=titulo, bg="#171d23", fg="white",
-                 font=("Segoe UI", 16, "bold")).pack(anchor="w", padx=22, pady=(20, 12))
-        cuerpo = tk.Frame(ventana, bg="#171d23")
-        cuerpo.pack(fill="both", expand=True, padx=22)
-        for clave, etiqueta in campos:
-            tk.Label(cuerpo, text=etiqueta, bg="#171d23", fg="#b9c4ce",
-                     font=("Segoe UI", 9)).pack(anchor="w", pady=(5, 2))
-            entrada = tk.Entry(cuerpo, bg="#252e37", fg="white", insertbackground="white",
-                               relief="flat", font=("Segoe UI", 10))
-            entrada.pack(fill="x", ipady=7)
-            entrada.insert(0, str(inicial.get(clave, "")))
-            entradas[clave] = entrada
+        ttk.Label(marco_mov, text="Motivo:").grid(row=1, column=2, sticky="w")
+        self.motivo_entry = ttk.Entry(marco_mov, width=30)
+        self.motivo_entry.grid(row=1, column=3, columnspan=2, padx=5)
 
-        def guardar():
-            valores = {k: e.get().strip() for k, e in entradas.items()}
-            if not valores["codigo"] or not valores["nombre"]:
-                messagebox.showwarning("Datos incompletos", "El código y el nombre son obligatorios.", parent=ventana)
-                return
-            try:
-                for k in ("precio_compra", "precio_venta", "stock", "stock_minimo"):
-                    valores[k] = float(valores[k] or 0)
-                valores["stock"] = int(valores["stock"])
-                valores["stock_minimo"] = int(valores["stock_minimo"])
-            except ValueError:
-                messagebox.showerror("Dato inválido", "Los precios y existencias deben ser números.", parent=ventana)
-                return
-            lista = productos()
-            indice = next((i for i, p in enumerate(lista) if str(p.get("codigo")) == str(inicial.get("codigo"))), None) if inicial else None
-            if indice is None:
-                if any(str(p.get("codigo")) == valores["codigo"] for p in lista):
-                    messagebox.showerror("Código repetido", "Ya existe un producto con ese código.", parent=ventana)
-                    return
-                valores["activo"] = True
-                lista.append(valores)
-            else:
-                valores["activo"] = lista[indice].get("activo", True)
-                lista[indice] = valores
-            guardar_productos(lista)
-            self.actualizar()
-            ventana.destroy()
+        ttk.Button(marco_mov, text="Registrar", command=self.registrar).grid(row=0, column=5, rowspan=2, padx=10)
 
-        tk.Button(ventana, text="Guardar producto", command=guardar,
-                  bg="#16a36a", fg="white", activebackground="#128454",
-                  relief="flat", font=("Segoe UI", 10, "bold"), cursor="hand2").pack(fill="x", padx=22, pady=18, ipady=9)
+        self.alerta_label = ttk.Label(self, text="", foreground="red")
+        self.alerta_label.pack(pady=5)
 
-    def agregar(self):
-        self._formulario("Nuevo producto")
+        columnas = ["fecha", "codigo", "tipo", "cantidad", "motivo"]
+        self.tabla = TablaDatos(self, columnas, "Historial de Movimientos")
+        self.tabla.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
+        self.cargar_historial()
 
-    def editar(self):
-        seleccionado = self.tabla.selection()
-        if not seleccionado:
-            messagebox.showinfo("Selecciona un producto", "Elige un producto de la tabla.")
-            return
-        codigo = str(self.tabla.item(seleccionado[0], "values")[0])
-        item = next((p for p in productos() if str(p.get("codigo")) == codigo), None)
-        if item:
-            self._formulario("Editar producto", item)
+    def actualizar_alerta(self):
+        alertas = inventario.productos_en_alerta()
+        if alertas:
+            nombres = ", ".join(p["nombre"] for p in alertas)
+            self.alerta_label.config(text=f"⚠️ Productos con stock bajo: {nombres}")
+        else:
+            self.alerta_label.config(text="✅ Todos los productos tienen stock suficiente")
 
-    def eliminar(self):
-        seleccionado = self.tabla.selection()
-        if not seleccionado:
-            messagebox.showinfo("Selecciona un producto", "Elige un producto de la tabla.")
-            return
-        codigo = str(self.tabla.item(seleccionado[0], "values")[0])
-        if messagebox.askyesno("Confirmar", f"¿Eliminar el producto {codigo}?"):
-            guardar_productos([p for p in productos() if str(p.get("codigo")) != codigo])
-            self.actualizar()
+    def registrar(self):
+        try:
+            codigo = self.codigo_entry.get().strip()
+            tipo = self.tipo_var.get()
+            cantidad = int(self.cantidad_entry.get())
+            motivo = self.motivo_entry.get().strip() or "Sin especificar"
+
+            producto, alerta = inventario.registrar_movimiento(codigo, tipo, cantidad, motivo)
+            messagebox.showinfo("Éxito",
+                                f"Movimiento registrado.\nStock actual: {producto['stock']}")
+            self.codigo_entry.delete(0, tk.END)
+            self.cantidad_entry.delete(0, tk.END)
+            self.motivo_entry.delete(0, tk.END)
+            self.cargar_historial()
+            self.actualizar_alerta()
+        except ValueError:
+            messagebox.showerror("Error", "La cantidad debe ser un número entero")
+        except ErrorNegocio as e:
+            messagebox.showerror("Error", str(e))
+
+    def cargar_historial(self):
+        movimientos = inventario.listar_movimientos()
+        self.tabla.cargar_datos(movimientos)
