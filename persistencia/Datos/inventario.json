@@ -1,0 +1,16 @@
+[
+{
+    "fecha": "2026-11-12 22:22:02",
+    "codigo": "123",
+    "tipo": "entrada",
+    "cantidad": 10,
+    "motivo": "Sin especificar"
+},
+{
+    "fecha": "2026-11-13 19:41:22",
+    "codigo": "1234",
+    "tipo": "entrada",
+    "cantidad": 5,
+    "motivo": "Sin especificar"
+}
+]

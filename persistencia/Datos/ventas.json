@@ -1,0 +1,43 @@
+{
+"contador": 2,
+"facturas": [
+    {
+    "numero": 1,
+    "fecha": "2026-11-12 22:25:27",
+    "detalle": [
+        {
+        "codigo": "123",
+        "nombre": "frijol",
+        "precio_venta": 7000.0,
+        "cantidad": 4
+        }
+    ],
+    "descuento_porcentaje": 0.0,
+    "subtotal": 28000.0,
+    "descuento": 0.0,
+    "impuestos": 5320.0,
+    "total": 33320.0,
+    "estado": "Pagada",
+    "devoluciones": []
+    },
+    {
+    "numero": 2,
+    "fecha": "2026-11-13 19:42:40",
+    "detalle": [
+        {
+        "codigo": "1234",
+        "nombre": "arepa",
+        "precio_venta": 5500.0,
+        "cantidad": 5
+        }
+],
+    "descuento_porcentaje": 0.0,
+    "subtotal": 27500.0,
+    "descuento": 0.0,
+    "impuestos": 5225.0,
+    "total": 32725.0,
+    "estado": "Pagada",
+    "devoluciones": []
+    }
+]
+}
