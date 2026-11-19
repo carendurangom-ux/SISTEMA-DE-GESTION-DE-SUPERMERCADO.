@@ -1,0 +1,23 @@
+"""Paquete de lógica de negocio del Sistema de Gestión de Supermercado"""
+
+class ErrorNegocio(Exception):
+    """Excepción personalizada para reglas de negocio incumplidas"""
+    pass
+
+from .caja import abrir_caja, cerrar_caja, registrar_efectivo, sesion_abierta, cargar_caja, calcular_esperado
+from .productos import crear_producto, editar_producto, cambiar_estado, buscar_producto, buscar_productos, cargar_productos
+from .inventario import registrar_movimiento, listar_movimientos, productos_en_alerta
+from .ventas import agregar_al_carrito, quitar_del_carrito, calcular_totales, confirmar_venta, calcular_cambio, cargar_ventas, buscar_factura, registrar_devolucion, reporte_ventas, ahora
+
+__all__ = [
+    'ErrorNegocio',
+    # Caja
+    'abrir_caja', 'cerrar_caja', 'registrar_efectivo', 'sesion_abierta', 'cargar_caja', 'calcular_esperado',
+    # Productos
+    'crear_producto', 'editar_producto', 'cambiar_estado', 'buscar_producto', 'buscar_productos', 'cargar_productos',
+    # Inventario
+    'registrar_movimiento', 'listar_movimientos', 'productos_en_alerta',
+    # Ventas
+    'agregar_al_carrito', 'quitar_del_carrito', 'calcular_totales', 'confirmar_venta', 'calcular_cambio',
+    'cargar_ventas', 'buscar_factura', 'registrar_devolucion', 'reporte_ventas', 'ahora',
+]
