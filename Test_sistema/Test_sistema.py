@@ -13,9 +13,9 @@ RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if RAIZ not in sys.path:
     sys.path.insert(0, RAIZ)
 
-from PERSISTENCIA import archivos_json
-from PERSISTENCIA.archivos_json import ErrorPersistencia
-from NEGOCIO.validaciones import ErrorNegocio
+from persistencia import archivos_json
+from persistencia.archivos_json import ErrorPersistencia
+from NEGOCIO import ErrorNegocio
 from NEGOCIO import productos, inventario, caja, ventas
 
 
@@ -209,7 +209,7 @@ class PruebasCaja(BasePrueba):
         """CP-20: declarar menos efectivo -> diferencia exacta negativa."""
         self.crear()
         caja.abrir_caja(100000)
-        self.vender(cantidad=2)                       # +5950
+        self.vender(cantidad=2)
         caja.registrar_efectivo("egreso", "Compra de bolsas", 1000)
         sesion = caja.cerrar_caja(104000)
         self.assertEqual(sesion["valor_esperado"], 104950.0)
@@ -246,7 +246,7 @@ class PruebasPersistencia(BasePrueba):
         """CP-24: si la escritura falla, el archivo original no se daña ni quedan temporales."""
         self.crear()
         with self.assertRaises(ErrorPersistencia):
-            archivos_json.guardar("productos", {1, 2, 3})   # un set no es serializable
+            archivos_json.guardar("productos", {1, 2, 3})
         self.assertEqual(len(productos.cargar_productos()), 1)
         self.assertEqual([a for a in os.listdir(self.tmp) if a.endswith(".tmp")], [])
 
